@@ -1,2 +1,2 @@
-# iv1212
-coursework for KTH course iv1212 
+# ID1212
+Coursework for KTH course ID1212 
