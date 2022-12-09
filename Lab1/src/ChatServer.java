@@ -6,14 +6,13 @@ public class ChatServer {
     public static void main(String[] args) throws IOException {
         ServerSocket ss;
         Socket s;
-        // While true
         ss = new ServerSocket(8080);
 
         while (true) {
             try {
             s = ss.accept(); // Varje s är en ny anslutning
-            Runnable clientListener = new ClientListener(s);
-            Thread clientListenerThread = new Thread(clientListener);
+            Runnable clientHandler = new ClientHandler(s);
+            Thread clientListenerThread = new Thread(clientHandler);
             clientListenerThread.start();
             Thread.sleep(1000); // Vettefan om det här drar mindre CPU, busy waiting
             } catch (InterruptedException e) {
@@ -23,12 +22,12 @@ public class ChatServer {
     }
 }
 
-class ClientListener implements Runnable {
+class ClientHandler implements Runnable {
     private Socket s;
     private BufferedReader bufferedReader;
     private BufferedWriter bufferedWriter;
 
-    public ClientListener(Socket s) {
+    public ClientHandler(Socket s) {
         try {
             this.s = s;
             this.bufferedReader = new BufferedReader(new InputStreamReader(s.getInputStream()));
@@ -43,7 +42,7 @@ class ClientListener implements Runnable {
 //        System.out.println("Host Address: " + s.getLocalAddress());
 //        System.out.println("Client Address: " + s.getInetAddress());
 //        System.out.println("Host port: " + s.getLocalPort());
-//        System.out.println("Client port: " + s.getPort());
+        System.out.println("Client port: " + s.getPort());
         //System.out.println(s.getLocalSocketAddress());
         //System.out.println(s.getRemoteSocketAddress());
 
@@ -53,6 +52,9 @@ class ClientListener implements Runnable {
                 while (this.bufferedReader.ready()) {
                     String incomingMessage = this.bufferedReader.readLine();
                     System.out.println("Message: " + incomingMessage);
+                    bufferedWriter.write("To client: " + incomingMessage);
+                    bufferedWriter.newLine();
+                    bufferedWriter.flush();
                 }
                 //System.out.println(this.bufferedReader.ready());
             } catch (IOException e) {
