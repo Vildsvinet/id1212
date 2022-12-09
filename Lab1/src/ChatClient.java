@@ -57,9 +57,11 @@ class KeyboardListener implements Runnable {
 
         } catch (IOException e) {
             System.out.print(e.getMessage());
+            System.out.println("Brutal exit");
         }
         try {
             // Når aldrig dessa, lägg till funktionallitet för att avsluta isf
+
             osw.close();
             s.close();
         } catch (IOException e) {
