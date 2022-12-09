@@ -9,22 +9,21 @@ public class ChatClient {
 
     public static void main(String[] args) {
         Socket s;
-        OutputStreamWriter osw;
 
         try {
             s = new Socket("localhost", 8080);
             //Thread.sleep(1000);
 
-            // Skapa trådarna för klasserna, anropa startmetoden för respektive
-            KeyboardListener kl = new KeyboardListener(s);
-            ServerListener sl = new ServerListener(s);
+            // Skapa trådarna för klasserna, anropa startmetoden för respektive (start är som att köra kl.run t.ex.)
+            Runnable keyboardListener = new KeyboardListener(s);
+            Thread keyboardListenerThread = new Thread(keyboardListener);
+            keyboardListenerThread.start();
 
-            kl.run();
-            sl.run();
+            Runnable serverListener = new ServerListener(s);
+            Thread serverListenerThread = new Thread(serverListener);
+            serverListenerThread.start();
 
-        } catch (java.net.UnknownHostException e) {
-            System.out.print(e.getMessage());
-        } catch (java.io.IOException e) {
+        } catch (IOException e) {
             System.out.print(e.getMessage());
         }
 
@@ -34,28 +33,37 @@ public class ChatClient {
 class KeyboardListener implements Runnable {
     private Socket s;
     private OutputStreamWriter osw;
+    private BufferedReader keyboardInput;
 
     // Constructor
     public KeyboardListener(Socket s) {
-        this.s = s;
+        try {
+            this.s = s;
+            osw = new OutputStreamWriter(s.getOutputStream());
+            keyboardInput = new BufferedReader(new InputStreamReader(System.in));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public void run() {
         try {
-            BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-            osw = new OutputStreamWriter(s.getOutputStream());
 
-            for (int i = 0; i < 5; i++) {
-                String messageLine = br.readLine();
-                osw.write(messageLine);
+            while (true) {
+                osw.write(keyboardInput.read());
                 osw.flush();
                 //Thread.sleep(1000);
             }
+
+        } catch (IOException e) {
+            System.out.print(e.getMessage());
+        }
+        try {
+            // Når aldrig dessa, lägg till funktionallitet för att avsluta isf
             osw.close();
-        } catch (java.net.UnknownHostException e) {
-            System.out.print(e.getMessage());
-        } catch (java.io.IOException e) {
-            System.out.print(e.getMessage());
+            s.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 }
@@ -64,24 +72,31 @@ class KeyboardListener implements Runnable {
 
 class ServerListener implements Runnable {
     private Socket s;
+    private BufferedReader incoming;
 
     public ServerListener(Socket s) {
-        this.s = s;
+        try {
+            this.s = s;
+            this.incoming = new BufferedReader(new InputStreamReader(s.getInputStream()));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public void run() {
-
         try {
-            BufferedReader br = new BufferedReader(new InputStreamReader(s.getInputStream())); // System.in ersätts med socket.getinputstream
-
-            String rad = br.readLine();
-            System.out.println(rad);
+            while (true)
+                System.out.println(incoming.readLine());
             //Thread.sleep(1000);
-            br.close();
-        } catch (java.net.UnknownHostException e) {
-            System.out.print(e.getMessage());
-        } catch (java.io.IOException e) {
-            System.out.print(e.getMessage());
+
+        } catch (IOException e) {
+            System.err.print(e.getMessage());
+        }
+        try {
+            incoming.close();
+            s.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 }

@@ -1,6 +1,4 @@
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
+import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 
@@ -10,57 +8,91 @@ public class ChatServer {
         Socket s;
         // While true
         ss = new ServerSocket(8080);
-        s = ss.accept(); // Varje s är en ny anslutning
-        // Ny klientlyssnare med s, varje gång vi får en skapar vi en ny
-        ClientListener cl = new ClientListener(s);
-        cl.run();
+
+        while (true) {
+            try {
+            s = ss.accept(); // Varje s är en ny anslutning
+            Runnable clientListener = new ClientListener(s);
+            Thread clientListenerThread = new Thread(clientListener);
+            clientListenerThread.start();
+            Thread.sleep(1000); // Vettefan om det här drar mindre CPU, busy waiting
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        }
     }
 }
 
 class ClientListener implements Runnable {
     private Socket s;
-    public ClientListener(Socket s){
-        this.s = s;
+    private BufferedReader bufferedReader;
+    private BufferedWriter bufferedWriter;
+
+    public ClientListener(Socket s) {
+        try {
+            this.s = s;
+            this.bufferedReader = new BufferedReader(new InputStreamReader(s.getInputStream()));
+            this.bufferedWriter = new BufferedWriter(new OutputStreamWriter(s.getOutputStream()));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public void run() {
-    // Hela run som while trueish
+        System.out.println("Someone connected!");
+//        System.out.println("Host Address: " + s.getLocalAddress());
+//        System.out.println("Client Address: " + s.getInetAddress());
+//        System.out.println("Host port: " + s.getLocalPort());
+//        System.out.println("Client port: " + s.getPort());
+        //System.out.println(s.getLocalSocketAddress());
+        //System.out.println(s.getRemoteSocketAddress());
 
-        // BufferedReader br;
-
-        InputStreamReader isr = null;
-        //OutputStreamWriter osw = null;
-        try {
-            System.out.println("Host Address: " + s.getLocalAddress());
-            System.out.println("Client Address: " + s.getInetAddress());
-            System.out.println("Host port: " + s.getLocalPort());
-            System.out.println("Client port: " + s.getPort());
-            //System.out.println(s.getLocalSocketAddress());
-            //System.out.println(s.getRemoteSocketAddress());
-            isr = new InputStreamReader(s.getInputStream());
-            //osw = new OutputStreamWriter(s.getOutputStream());
-        } catch (java.net.UnknownHostException e) {
-            System.out.print(e.getMessage());
-        } catch (java.io.IOException e) {
-            System.out.print(e.getMessage());
-        }
-        //String response = "Response.";
-        while(true) {
+        // While client is connected, keep on spinning
+        while (s.isConnected()) {
             try {
-                while (isr.ready()) {
-                    System.out.print((char) isr.read());
-                    //System.out.println("Testprint: " + response);
-                    //osw.write(response);
-                    //osw.flush();
+                while (this.bufferedReader.ready()) {
+                    String incomingMessage = this.bufferedReader.readLine();
+                    System.out.println("Message: " + incomingMessage);
                 }
-            } catch (java.io.IOException e) {
-                System.out.print(e.getMessage());
+                //System.out.println(this.bufferedReader.ready());
+            } catch (IOException e) {
+                System.err.println(e);
             }
-//            try {
-//                osw.close();
-//            } catch (IOException e) {
-//                throw new RuntimeException(e);
-//            }
         }
+
+//        InputStreamReader isr = null;
+//        //OutputStreamWriter osw = null;
+//        try {
+//            System.out.println("Host Address: " + s.getLocalAddress());
+//            System.out.println("Client Address: " + s.getInetAddress());
+//            System.out.println("Host port: " + s.getLocalPort());
+//            System.out.println("Client port: " + s.getPort());
+//            //System.out.println(s.getLocalSocketAddress());
+//            //System.out.println(s.getRemoteSocketAddress());
+//            isr = new InputStreamReader(s.getInputStream());
+//            //osw = new OutputStreamWriter(s.getOutputStream());
+//        } catch (java.net.UnknownHostException e) {
+//            System.out.print(e.getMessage());
+//        } catch (java.io.IOException e) {
+//            System.out.print(e.getMessage());
+//        }
+//        //String response = "Response.";
+//        while(true) {
+//            try {
+//                while (isr.ready()) {
+//                    System.out.print((char) isr.read());
+//                    //System.out.println("Testprint: " + response);
+//                    //osw.write(response);
+//                    //osw.flush();
+//                }
+//            } catch (java.io.IOException e) {
+//                System.out.print(e.getMessage());
+//            }
+////            try {
+////                osw.close();
+////            } catch (IOException e) {
+////                throw new RuntimeException(e);
+////            }
+//        }
     }
 }
