@@ -5,15 +5,15 @@ import java.util.ArrayList;
 
 public class ChatServer {
     public static void main(String[] args) throws IOException {
-        ArrayList<ClientHandler> connectedClients = new ArrayList<>();
+        ArrayList<ClientHandler> connectedClients = new ArrayList<>(); // En lista med client handlers
         ServerSocket ss;
         Socket s;
         ss = new ServerSocket(8080);
 
         while (true) {
             try {
-            s = ss.accept(); // Varje s är en ny anslutning
-            Runnable clientHandler = new ClientHandler(s, connectedClients);
+            s = ss.accept(); // Varje s är en ny anslutning, väntar på ny anslutning
+            ClientHandler clientHandler = new ClientHandler(s, connectedClients);
             Thread clientListenerThread = new Thread(clientHandler);
             clientListenerThread.start();
             Thread.sleep(1000); // Vettefan om det här drar mindre CPU, busy waiting
@@ -23,7 +23,7 @@ public class ChatServer {
         }
     }
 }
-
+// Each client handler handles one client
 class ClientHandler implements Runnable {
     private Socket s;
     private BufferedReader bufferedReader;

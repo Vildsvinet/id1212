@@ -12,19 +12,18 @@ public class ChatClient {
 
         try {
             s = new Socket("localhost", 8080);
-            //Thread.sleep(1000);
 
             // Skapa trådarna för klasserna, anropa startmetoden för respektive (start är som att köra kl.run t.ex.)
-            Runnable keyboardListener = new KeyboardListener(s);
+            KeyboardListener keyboardListener = new KeyboardListener(s);
             Thread keyboardListenerThread = new Thread(keyboardListener);
             keyboardListenerThread.start();
 
-            Runnable serverListener = new ServerListener(s);
+            ServerListener serverListener = new ServerListener(s);
             Thread serverListenerThread = new Thread(serverListener);
             serverListenerThread.start();
 
         } catch (IOException e) {
-            System.out.print(e.getMessage());
+            System.err.print(e.getMessage());
         }
 
     }
@@ -56,7 +55,7 @@ class KeyboardListener implements Runnable {
             }
 
         } catch (IOException e) {
-            System.out.print(e.getMessage());
+            System.out.println(e.getMessage());
             System.out.println("Brutal exit");
         }
         try {
@@ -87,8 +86,9 @@ class ServerListener implements Runnable {
 
     public void run() {
         try {
-            while (true)
+            while (true) {
                 System.out.println(incoming.readLine());
+            }
             //Thread.sleep(1000);
 
         } catch (IOException e) {
