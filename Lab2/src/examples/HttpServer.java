@@ -5,6 +5,8 @@ package examples;
 import java.io.*;
 import java.net.*;
 import java.util.StringTokenizer;
+import java.nio.file.Paths;
+
 
 public class HttpServer {
 
@@ -32,7 +34,7 @@ public class HttpServer {
             PrintStream response =
                     new PrintStream(s.getOutputStream());
             response.println("HTTP/1.1 200 OK");
-            response.println("Server: Trash 0.1 Beta");
+            response.println("Server: Awesome 0.1 Beta");
             if (requestedDocument.indexOf(".html") != -1)
                 response.println("Content-Type: text/html");
             if (requestedDocument.indexOf(".gif") != -1)
@@ -41,15 +43,30 @@ public class HttpServer {
             response.println("Set-Cookie: clientId=1; expires=Wednesday,31-Dec-22 21:00:00 GMT"); //Remove date to make it a session-cookie
 
             response.println();
-            if (!"\favicon.ico".equals(requestedDocument)) { // Ignore any additional request to retrieve the bookmark-icon.
-                File f = new File("." + requestedDocument);
+
+            System.out.println("Current requested document outside: "+requestedDocument);
+            if (!"/favicon.ico".equals(requestedDocument)) { // Ignore any additional request to retrieve the bookmark-icon.
+                System.out.println("Before");
+
+                File f = new File("./src/view/" + requestedDocument);
+                System.out.println(Paths.get(".").toAbsolutePath().normalize().toString());
+
+                System.out.println("Current requested document inside: "+requestedDocument);
+
                 FileInputStream infil = new FileInputStream(f);
+                System.out.println("After");
                 byte[] b = new byte[1024];
                 while (infil.available() > 0) {
                     response.write(b, 0, infil.read(b));
                 }
                 s.shutdownOutput();
                 s.close();
+            }
+            // Handle the requests
+            else {
+                // Check for cookie header, first time or not?
+                // No cookie -> Set new cookie
+                // If cookie -> Continue game
             }
         }
     }
