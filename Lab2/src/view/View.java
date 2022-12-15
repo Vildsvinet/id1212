@@ -64,8 +64,25 @@ public class View {
             x = 1;
         respond(x);
         System.out.println("Response to user set to: " + responseToUser);
-        String test = TEMPLATE;
-        response.println(test);
+        TEMPLATE = "<!DOCTYPE html>\n" +
+                "<html>\n" +
+                "<body>\n" +
+                "\n" +
+                "<h1>Lab 2</h1>\n" +
+                "\n" +
+                "<head>\n" +
+                "    <title>Lab 2</title>\n" +
+                "</head>\n" + responseToUser +
+                "      <p>Make a guess:</p>\n" +
+                "      <form>\n" +
+                "         Guess:<br> <input type=\"text\" name=\"guess\">\n" +
+                "         <br>\n" +
+                "      </form>\n" +
+                "   </body>\n" +
+                "\n" +
+                "</body>\n" +
+                "</html>";
+        response.println(TEMPLATE);
     }
 
 
