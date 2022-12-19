@@ -4,6 +4,9 @@ import controller.Controller;
 
 import java.io.PrintStream;
 
+/**
+ * Sends responses to the browser based on input from the controller
+ */
 public class View {
     public View() {
     }
@@ -18,7 +21,7 @@ public class View {
             "<html>\n" +
             "<body>\n" +
             "\n" +
-            "<h1>Lab 2</h1>\n" +
+            "<h1>Guessing game</h1>\n" +
             "\n" +
             "<head>\n" +
             "    <title>Lab 2</title>\n" +

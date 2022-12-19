@@ -27,12 +27,14 @@ public class Controller implements Runnable {
     int cookieFound = 0;
 
     public void run() {
-        System.out.println();
+
         int clientID = game.getClientID();
-        System.out.println("Client ID at the start of run: " + clientID);
+
         int numberOfGuesses = -1;
         int guess = -1;
         int response = -1;
+        System.out.println();
+        //System.out.println("Client ID at the start of run: " + clientID);
         //System.out.println("Client connected"); // Kommer säkert köras varje gång sidan uppdaterar
         System.out.println("Client port: " + clientSocket.getPort());
 
@@ -69,17 +71,18 @@ public class Controller implements Runnable {
                     response = game.handleGuess(guess, clientID, numberOfGuesses); // Handle the guess made
                     numberOfGuesses = game.getNoOfGuesses(clientID); // Get number of guesses again, since game logic updated it
                     view.sendResponse(printStream, response, numberOfGuesses); // Send all info to view, which will generate an HTTP response
-                    System.out.println("Client ID before updating number of guesses in Hashmap: " + clientID); // Debugging
+                    //System.out.println("Client ID before updating number of guesses in Hashmap: " + clientID); // Debugging
                 }
 
                 // No cookie, set new welcome cookie
                 if (cookieFound == 0) {
+                    game.newGame(clientID);
                     System.out.println("No cookie found");
                     view.printPreamble(printStream, requestedDocument, clientID); // Send page for clients without any cookie set
-                    System.out.println("Game client ID is " + clientID + " before iterating");
+                    //System.out.println("Game client ID is " + clientID + " before iterating");
                     clientID++;
                     game.setClientID(clientID);
-                    System.out.println("Iterating: Client ID set to " + clientID);
+                    //System.out.println("Iterating: Client ID set to " + clientID);
                 }
 
                 System.out.println("Request processed.");

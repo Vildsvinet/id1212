@@ -8,7 +8,7 @@ import java.net.Socket;
 
 public class Main {
     public static void main(String[] args) throws IOException {
-        System.out.println("Creating Serversocket");
+        //System.out.println("Creating Serversocket");
         ServerSocket serverSocket = new ServerSocket(8080);
         System.out.println("Server running on port: " + serverSocket.getLocalPort());
 
