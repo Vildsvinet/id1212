@@ -8,15 +8,15 @@ import java.util.Scanner;
  * <a href="https://en.wikipedia.org/wiki/Internet_Message_Access_Protocol#Dialog_example">...</a>
  */
 public class Receive {
-    public static int PORT = 993;
-    public static String SERVER = "webmail.kth.se";
+    public static final int PORT = 993;
+    public static final String SERVER = "webmail.kth.se";
 
     public static void main(String[] args) {
         try {
             // Create a socket factory for creating SSL sockets
             SSLSocketFactory socketFactory = (SSLSocketFactory) SSLSocketFactory.getDefault();
 
-            // Create a socket to the server
+            // Create a socket to the server (SSL Socket)
             SSLSocket socket = (SSLSocket) socketFactory.createSocket(SERVER, PORT);
 
             // Set up the input and output streams
@@ -66,6 +66,10 @@ public class Receive {
             out.println(logout);
             out.flush();
             readMessage(in);
+
+            socket.close();
+            in.close();
+            out.close();
 
         } catch (Exception e) {
             System.err.println(e);
