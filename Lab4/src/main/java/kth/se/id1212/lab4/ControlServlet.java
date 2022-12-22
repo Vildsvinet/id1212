@@ -8,13 +8,13 @@ import java.io.IOException;
 
 @WebServlet(name = "ControlServlet", value = "/ControlServlet")
 public class ControlServlet extends jakarta.servlet.http.HttpServlet {
-    CompleteModel completeModel;
+    GameLogic gameLogic;
 
     /**
      * Startup
      */
     public void init() {
-        completeModel = new CompleteModel();
+        gameLogic = new GameLogic();
         System.out.println("Initialization complete");
     }
 
@@ -31,9 +31,9 @@ public class ControlServlet extends jakarta.servlet.http.HttpServlet {
         HttpSession session = request.getSession(true); // True bit means starting a new session if none exists. Leaving it blank is the same as setting it to true
         String guess = request.getParameter("guess"); // Same as extractGuess in Lab 2
         String sessionID = session.getId(); // Same as extractCookie in Lab 2
-        String processedGuess = completeModel.processGuess(sessionID, (guess)); // Same as handleGuess in Lab 2
-        int numberOfGuesses = completeModel.getNumberOfGuesses(sessionID);
-        int lastRunGuesses = completeModel.getLastRunGuesses();
+        String processedGuess = gameLogic.processGuess(sessionID, (guess)); // Same as handleGuess in Lab 2
+        int numberOfGuesses = gameLogic.getNumberOfGuesses(sessionID);
+        int lastRunGuesses = gameLogic.getLastRunGuesses();
         session.setAttribute("processedGuess", processedGuess);
         session.setAttribute("numberOfGuesses", numberOfGuesses);
         session.setAttribute("lastRunGuesses", lastRunGuesses);
@@ -49,3 +49,27 @@ public class ControlServlet extends jakarta.servlet.http.HttpServlet {
 
     }
 }
+
+// When using CompleteModel.Java
+/*
+    public void init() {
+        completeModel = new CompleteModel();
+        System.out.println("Initialization complete");
+    }
+
+
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        response.setContentType("text/html;charset=UTF-8");
+        HttpSession session = request.getSession(true); // True bit means starting a new session if none exists. Leaving it blank is the same as setting it to true
+        String guess = request.getParameter("guess"); // Same as extractGuess in Lab 2
+        String sessionID = session.getId(); // Same as extractCookie in Lab 2
+        String processedGuess = completeModel.processGuess(sessionID, (guess)); // Same as handleGuess in Lab 2
+        int numberOfGuesses = completeModel.getNumberOfGuesses(sessionID);
+        int lastRunGuesses = completeModel.getLastRunGuesses();
+        session.setAttribute("processedGuess", processedGuess);
+        session.setAttribute("numberOfGuesses", numberOfGuesses);
+        session.setAttribute("lastRunGuesses", lastRunGuesses);
+
+        response.sendRedirect("guessing.jsp");
+    }
+ */
