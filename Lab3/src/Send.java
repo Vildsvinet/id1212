@@ -49,7 +49,7 @@ public class Send {
         out.println("STARTTLS");
         out.flush();
         line = in.readLine();
-        // Only send the password if we can establish a secore connection
+        // Only send the password if we can establish a secure connection
         if (line.startsWith("220 ")) {
             System.out.println(line);
         }

@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="javax.mail">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/Dropbox/KTH/ID1212/javax.mail.jar!/" />
+      <root url="jar://$USER_HOME$/Dropbox/KTH/ID1212/jsoup-1.15.3.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

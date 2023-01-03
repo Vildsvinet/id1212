@@ -77,7 +77,7 @@ public class Receive {
         }
     }
 
-    public static void readMessage(BufferedReader in) throws IOException {
+    private static void readMessage(BufferedReader in) throws IOException {
         String line;
         while ((line = in.readLine()) != null && line.length() > 0) {
             System.out.println("Server response: " + line);
